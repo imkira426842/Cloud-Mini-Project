@@ -1,0 +1,8 @@
+{
+  "name": "cloud-resource-monitoring-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack cloud resource monitoring and alert system",
+  "scripts": {"dev": "concurrently \"npm:dev:backend\" \"npm:dev:frontend\"", "dev:backend": "npm --prefix backend run dev", "dev:frontend": "npm --prefix frontend run dev", "build": "npm --prefix frontend run build", "test": "npm --prefix backend test"},
+  "devDependencies": {"concurrently": "^9.1.2"}
+}

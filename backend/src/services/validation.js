@@ -1,0 +1,6 @@
+import { z } from 'zod';
+export const registerSchema = z.object({ name: z.string().trim().min(2).max(80), email: z.string().trim().email().max(254), password: z.string().min(8).max(128) });
+export const loginSchema = z.object({ email: z.string().trim().email(), password: z.string().min(1).max(128) });
+export const serverSchema = z.object({ name: z.string().trim().min(2).max(100), hostname: z.string().trim().min(1).max(253), environment: z.enum(['Development','Staging','Production']).optional(), description: z.string().max(500).optional(), monitoringMode: z.enum(['demo','agent']).optional() });
+export const alertSchema = z.object({ name: z.string().trim().min(2).max(100), server: z.string().nullable().optional(), metric: z.enum(['cpu','memory','disk']), threshold: z.number().min(1).max(100), severity: z.enum(['warning','critical']), consecutiveEvaluations: z.number().int().min(1).max(20), enabled: z.boolean().optional() });
+export function parse(schema, value) { const result = schema.safeParse(value); if (!result.success) { const error = new Error(result.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join('; ')); error.status = 400; error.issues = result.error.issues; throw error; } return result.data; }

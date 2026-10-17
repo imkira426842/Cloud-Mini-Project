@@ -1,0 +1,18 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import api from './routes/api.js';
+import { notFound, errorHandler } from './middleware/errors.js';
+const app = express();
+app.disable('x-powered-by');
+app.use(helmet());
+const origins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173').split(',').map(s => s.trim());
+app.use(cors({ origin: (origin, cb) => !origin || origins.includes('*') || origins.includes(origin) ? cb(null, true) : cb(new Error('Origin not allowed by CORS')), credentials: false }));
+app.use(express.json({ limit: '100kb' }));
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+app.get('/', (req, res) => res.json({ name: 'Cloud Resource Monitoring API', version: '1.0.0', health: '/api/health' }));
+app.use('/api', api);
+app.use(notFound);
+app.use(errorHandler);
+export default app;
